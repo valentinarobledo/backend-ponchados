@@ -1,0 +1,29 @@
+{
+  "ENV": "development",
+
+  "development": {
+    "database": "ponchados",
+    "username": "root",
+    "password": "Demo_pw9",
+    "sequelizeOpts": {
+      "host": "localhost",
+      "dialect": "mysql",
+      "logging": false
+    },
+
+    "port": 8000
+  },
+
+  "production": {
+    "database": "cash",
+    "username": "root",
+    "password": "Juandavid!23",
+
+    "sequelizeOpts": {
+      "host": "127.0.0.1",
+      "dialect": "mysql"
+    },
+
+    "port": 80
+  }
+}

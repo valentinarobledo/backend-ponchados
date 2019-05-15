@@ -1,0 +1,24 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "serve": "nodemon app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/valentinarobledo/backend-ponchados.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/valentinarobledo/backend-ponchados/issues"
+  },
+  "homepage": "https://github.com/valentinarobledo/backend-ponchados#readme",
+  "dependencies": {
+    "express": "^4.16.4",
+    "bcrypt": "^3.0.6",
+    "sequelize": "5.8.5"
+  }
+}
