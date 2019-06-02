@@ -3,11 +3,11 @@ module.exports = function(express, db){
 
 		store: async function (req, res){
 			try {
+				console.log(req.body	)
 				let user = req.user;
 				let question = await db.Question.create({
 					question: req.body.question
 				});
-
 				let answers = req.body.answers;
 
 				let data = [];
@@ -15,14 +15,12 @@ module.exports = function(express, db){
 					data.push({
 						answer: answers[i].text,
 						correct: answers[i].correct,
-						quiestionId: question.id
+						questionId: question.id
 					});
 				}
 				await db.Answer.bulkCreate(data);
-
-				return res.json({message: "Question have been created"});
+				return res.json({message: "La pregunta ha sido creada"});
 				console.log(question);
-
 			}
 			 catch(err) {
 				console.log( err );
@@ -31,104 +29,115 @@ module.exports = function(express, db){
 		},
 
 		editQuestion: async function(req, res){
+			console.log(req.body);
 			try{
-
-				let question = req.question;
-				let user = req.user;
-				
-				// rolId student = 3, techer = 2,admin = 1
-				if(user.rolId == 3) return res.status(400).json({message: "Permission denied"});
-
-				let text = req.body.question;
-
+				let queryBuilder= {
+					where: {
+						id: {$eq: req.body.id}
+					}
+				}
+				let question = await db.Question.findOne(queryBuilder);
 				await question.update({
-					question: text
-				})
-
-				return res.json({message: "Question has been edited"});
-
+					question: req.body
+				});				
+				return res.json({message: "Pregunta ha sido editada"});
 			}
-
 			catch(err){
 				console.log( err );
 				return res.status(400).json({message: "Something went wrong"});
 			}
 		},
-
-		select: async function(req, res){
+		editAnswer: async function(){
 			try{
+				let ans = req.body.answer;
+				let queryBuilder =  {
+					where: {
+						id: {$eq: req.body.id}
+					}
+				};
 
-				let question = req.question;
-				let user = req.user;
-				
-				// rolId student = 3, techer = 2,admin = 1
-				if(user.rolId == 3) return res.status(400).json({message: "Permission denied"});
-
-				let select = req.body.selected;
-
-				await question.update({
-					selected: select
+				let answer = await db.Answer.findOne(queryBuilder)
+				await answer.update({
+					answer: ans
 				})
-
-				return res.json({message: "question has been select"});
-
+				return res.json({message:"Respuesta editada"})
 			}
-
 			catch(err){
+				console.log(err);
+				return res.status(400).json({message: "Something went wrong"});
+			}
+		},
+
+		list: async function(req, res){
+			try{
+				let queryBuilder = {
+					include: [{
+						model: db.Answer,
+						required: true
+					}],
+					where: {
+					}
+				}
+				let questions = await db.Question.findAll(queryBuilder);
+				return res.json(questions);							
+			}catch(err){
 				console.log( err );
 				return res.status(400).json({message: "Something went wrong"});
 			}
 		},
+
+		//Create questionnaire
 
 		create: async function(req, res){
-		 	try{
-		 		
-		 		let user = req.user;
-		 		let name = req.body.question;
-		 		
+		 	try{		 		
+		 		let name = req.body.name;		 		
 		 		let queryBuilder = {
 		 			where: {
-		 				name: { $eq: name }
+		 				name: { $eq: req.body.name }
 		 			}
 		 		}
 		 		let questionnaire = await db.User.findOne(queryBuilder);
-
-		 		if (!name) {
-
-					let name = req.body.name;
-			 		let questionId = req.body.questionId;
-			 		let answerId = req.body.answerId;
-				 		 /*	let data = [];
-							for (var i = answers.length - 1; i >= 0; i--) {
-							data.pull({
-							answer: answers[i].text,
-							correct: answers[i].correct,
-							quiestionId: question.id
-							});
-							}*/
-			 		let groupId = req.body.groupId;
+		 		if (!questionnaire) {
+			 		let name = req.body.name;
+			 		let gropuId = req.body.gropuId;
 			 		let active = req.body.active;
-			
+
 			 		let data = {
 			 			name,
-			 			questionId,
-			 			answerId,
-			 			groupId,
+			 			gropuId,
 			 			active
-			 		};
-
+			 		};			 
 			 		questionnaire = await db.Questionnaire.create(data);
-
-			 		return res.json({message: "Cuestionario creado"})
+			 		return res.json({message: "cuestionario creado"})
 		 		} else {
-		 			return res.status(400).json({message: "Cuestionario existente"})
+		 			return res.status(400).json({message: "El cuestionario ya existe"})
 		 		}
 		 	}
 		 	catch(err){
 		 		console.log( err );
 				return res.status(400).json({message: "Something went wrong"});
 		 	}
+		},
+		
+		questionnaire: async function(req, res){
+			try{
+				let queryBuilder = {
+					include: [{
+						model: db.Answer,
+						required: true
+					}],
+					where: {
+						questionnaireId: {
+							$eq: req.body.questionnaireId
+						}
+					}
+				}				
+				let questions = await db.Question.findAll(queryBuilder);
+				return res.json(questions);							
+			}catch(err){
+				console.log( err );
+				return res.status(400).json({message: "Something went wrong"});
+			}
 		}
-
 	}
 }

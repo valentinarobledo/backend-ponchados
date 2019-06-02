@@ -1,9 +1,7 @@
 module.exports = function(express, db){
 	return function (req, res, next) {
-		var token = req.headers.authorization.split(" ")[1]; 
-
-
-		var queryBuilder={
+		var token = req.headers.authorization.split(" ")[1];
+		var queryBuilder = {
 			where: {
 				token: { $eq: token }
 			}
@@ -14,8 +12,8 @@ module.exports = function(express, db){
 			req.user = user;
 			next();
 		})
-
 		.catch(err =>{
+			console.log(err)
 			res.status(401).json({message: 'Sin autorización'});
 		});
 	}

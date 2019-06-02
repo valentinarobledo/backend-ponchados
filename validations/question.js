@@ -10,13 +10,18 @@ module.exports = function (app, db) {
 			checkAuth,
 			checkQuestion
 		],
-		select: [
-			checkAuth,
-			checkQuestion
+
+		list: [
+			checkAuth
 		],
 
 		create: [
 			checkAuth
+		],
+
+		addQuestion: [
+			checkAuth
 		]
+
 	}
 } 

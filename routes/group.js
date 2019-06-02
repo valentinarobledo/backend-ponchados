@@ -6,8 +6,12 @@ module.exports = function(app, db){
 
 
 	router.post("/create", validations.create, controller.create);
-	router.post("/add", validations.add, controller.add);
+	router.post("/add", controller.add);
 	router.post("/edit", validations.edit, controller.edit);
+	router.post("/list", validations.list, controller.list);
+	router.post("/view", validations.students, controller.students);
+	router.post("/delete", validations.delete, controller.delete);
+	router.post("/deleteStudent", validations.deleteStudent, controller.deleteStudent);
 
 	
 

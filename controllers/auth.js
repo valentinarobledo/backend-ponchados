@@ -5,33 +5,28 @@ module.exports = function(app, db){
 	return{
 		login: async function (req, res) {
 			try{
-
-				 let user = req.user;
-				 
-				 let pass = await bcrypt.compare(req.body.password, user.password);
-
-				 console.log(pass, !pass);
-
-				 if(!pass){
-
-				 		return res.status(404).json({message: "Contraseñas no coinciden"});
-
-				 }
-
-				 return res.status(200).json({message: "Contraseñas validas"});
+				let user = req.user;				 
+				let bool = await bcrypt.compare(req.body.password, user.password);
+				if(!bool){
+				 	return res.status(404).json({message: "Contraseña incorrecta"});
+				}
+				return res.json({
+					message: "Contraseñas validas",
+					user: {
+						name: user.name,
+						token: user.token
+					}
+				});
 				
-						}
-
-			catch(err){
-
+			} catch(err){
+				console.log(err);
+				return res.status(500).json({message: "Something went wrong"});
 			}
 		},
 
 		register: async function(req, res){
-		 	try{
-		 		
+		 	try{	
 		 		let username = req.body.username;
-		 		
 		 		let queryBuilder = {
 		 			where: {
 		 				username: { $eq: username }
@@ -47,11 +42,12 @@ module.exports = function(app, db){
 			 		let password = req.body.password
 			 		let verifyPassword = req.body.verifyPassword
 
+			 		console.log(req.body);
+
 			 		if ( password != verifyPassword) {
 			 			return res.status(400).json({message: "Las contraseñas no coninciden "})
 			 		};
-
-			 		password = await bcrypt.hash( req.body.password, 10);
+			 			 		password = await bcrypt.hash( req.body.password, 10);
 
 			 		let data = {
 			 			email,
@@ -74,12 +70,6 @@ module.exports = function(app, db){
 		 		console.log( err );
 				return res.status(400).json({message: "Something went wrong"});
 		 	}
-		},
-
-		recover: async function(req, res){
-
-				
-
 		}
 	}
 

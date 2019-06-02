@@ -7,11 +7,23 @@ module.exports = function (app, db) {
 			checkAuth
 		],
 
-		add: [
+		edit: [
 			checkAuth
 		],
 
-		edit: [
+		list: [
+			checkAuth
+		],
+
+		students: [
+			checkAuth
+		],
+
+		delete: [
+			checkAuth
+		],
+
+		deleteStudent: [
 			checkAuth
 		]
 	}
