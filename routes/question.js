@@ -10,8 +10,11 @@ module.exports = function(app, db){
 	router.post("/list", validations.list, controller.list);
 	router.post("/create", validations.create, controller.create);
 	router.post("/store", validations.store, controller.store);
-	router.get("/questionnaire", controller.questionnaire);
+	router.post("/questionnaire", controller.questionnaire);
 	router.post("/editAnswer", controller.editAnswer);
+	router.post("/delete", controller.delete);
+	router.post("/view", controller.view);
+
 
 
 	return router;

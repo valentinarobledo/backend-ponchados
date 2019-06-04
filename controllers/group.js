@@ -41,6 +41,7 @@ module.exports = function(app, db){
 
 //Agregar usuario a un grupo
 		add: async function(req, res){
+			console.log(req.body);
 			try{
 				let user = req.user;
 				let username = req.body.username;
@@ -86,14 +87,7 @@ module.exports = function(app, db){
 
 		list: async function(req, res){
 			try{
-				let queryBuilder = {
-					include: [{
-						model: db.User,
-						required: true,
-					}],
-					where:{
-					}
-				}
+				console.log(req.body);
 				let json = [];
 				let groups = await db.Group.findAll();
 				for (var i = 0; i <= groups.length - 1; i++) {

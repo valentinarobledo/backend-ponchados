@@ -99,16 +99,11 @@ module.exports = function(express, db){
 		 		let questionnaire = await db.User.findOne(queryBuilder);
 		 		if (!questionnaire) {
 			 		let name = req.body.name;
-			 		let gropuId = req.body.gropuId;
-			 		let active = req.body.active;
-
 			 		let data = {
-			 			name,
-			 			gropuId,
-			 			active
+			 			name
 			 		};			 
 			 		questionnaire = await db.Questionnaire.create(data);
-			 		return res.json({message: "cuestionario creado"})
+			 		return res.json({message: "Cuestionario creado"})
 		 		} else {
 		 			return res.status(400).json({message: "El cuestionario ya existe"})
 		 		}
@@ -118,8 +113,46 @@ module.exports = function(express, db){
 				return res.status(400).json({message: "Something went wrong"});
 		 	}
 		},
-		
 		questionnaire: async function(req, res){
+			try{			
+				let json = [];
+				let questionnaires = await db.Questionnaire.findAll();
+				for (var i = 0; i <= questionnaires.length - 1; i++) {
+					let questions = await db.Question.findAll({
+						where: {
+							questionnaireId: { $eq: questionnaires[i].id }
+						}
+					});
+					let data = {
+						id: questionnaires[i].id,
+						name: questionnaires[i].name,
+						questions: questions.length
+					}
+					json.push(data);
+				}
+				return res.json(json);					
+			} catch(err) {
+				console.log( err );
+				return res.status(400).json({message: "Something went wrong"});
+			}
+		},
+		delete: async function(req, res){
+			console.log(req.body);
+			try{
+				let queryBuilder = {
+					where: {
+						id: {$eq: req.body.id}
+					}
+				}
+				let questionnaire = await db.Questionnaire.findOne(queryBuilder);
+				await questionnaire.destroy();
+				return res.json({message:"Cuestionario eliminado"});
+			}	catch(err) {
+				console.log(err);
+				return res.status(400).json({message: "Something went wrong"});
+			}
+		},
+		view: async function(req, res){
 			try{
 				let queryBuilder = {
 					include: [{
@@ -127,11 +160,9 @@ module.exports = function(express, db){
 						required: true
 					}],
 					where: {
-						questionnaireId: {
-							$eq: req.body.questionnaireId
-						}
+						id: {$eq: req.body.id}
 					}
-				}				
+				}
 				let questions = await db.Question.findAll(queryBuilder);
 				return res.json(questions);							
 			}catch(err){
