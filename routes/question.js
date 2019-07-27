@@ -12,8 +12,9 @@ module.exports = function(app, db){
 	router.post("/store", validations.store, controller.store);
 	router.post("/questionnaire", controller.questionnaire);
 	router.post("/editAnswer", controller.editAnswer);
-	router.post("/delete", controller.delete);
+	router.post("/delete", validations.delete, controller.delete);
 	router.post("/view", controller.view);
+	router.post("/show", controller.show);
 
 
 

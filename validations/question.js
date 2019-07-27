@@ -5,6 +5,7 @@ module.exports = function (app, db) {
 
 	return {
 		store: [
+			checkAuth
 		],
 		editQuestion: [
 			checkAuth,
@@ -21,6 +22,11 @@ module.exports = function (app, db) {
 
 		addQuestion: [
 			checkAuth
+		],
+
+		delete: [
+			checkAuth,
+			checkQuestion
 		]
 
 	}

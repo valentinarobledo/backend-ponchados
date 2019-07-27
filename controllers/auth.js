@@ -14,7 +14,8 @@ module.exports = function(app, db){
 					message: "Contraseñas validas",
 					user: {
 						name: user.name,
-						token: user.token
+						token: user.token,
+						rolId: user.rolId
 					}
 				});
 				
@@ -38,11 +39,9 @@ module.exports = function(app, db){
 		 			let email = req.body.email;
 			 		let name = req.body.name;
 			 		let number = req.body.number;
-
 			 		let password = req.body.password
 			 		let verifyPassword = req.body.verifyPassword
 
-			 		console.log(req.body);
 
 			 		if ( password != verifyPassword) {
 			 			return res.status(400).json({message: "Las contraseñas no coninciden "})
@@ -51,7 +50,7 @@ module.exports = function(app, db){
 
 			 		let data = {
 			 			email,
-			 			username,
+			 			usernamse,
 			 			token: new Buffer.from(password).toString('Base64'),
 			 			name,
 			 			number,

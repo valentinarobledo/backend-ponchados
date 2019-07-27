@@ -1,6 +1,7 @@
 const express = require ("express");
 const app = express ();
 const helmet = require ("helmet");
+const multer = require("multer");
 const bodyParser = require('body-parser');
 const config = require("./config/config.js");
 const db = require('./models');
@@ -15,6 +16,7 @@ router.use('/auth',  r('./routes/auth'));
 router.use('/question',  r('./routes/question'));
 router.use('/answer',  r('./routes/answer'));
 router.use('/group', r('./routes/group'));
+//router.use('/upload', r('./routes/upload'));
 
 app.disable('x-powered-by');
 app.use(bodyParser.urlencoded({ extended: false }));

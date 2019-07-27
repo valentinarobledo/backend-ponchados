@@ -6,7 +6,9 @@ module.exports = function(express, db){
 				console.log(req.body	)
 				let user = req.user;
 				let question = await db.Question.create({
-					question: req.body.question
+					question: req.body.question,
+					userId: req.user.id,
+					questionnaireId: req.body.qId
 				});
 				let answers = req.body.answers;
 
@@ -27,45 +29,45 @@ module.exports = function(express, db){
 				return res.status(400).json({message: "Something went wrong"});
 			}
 		},
-
 		editQuestion: async function(req, res){
-			console.log(req.body);
 			try{
-				let queryBuilder= {
+				let queryBuilder = {
 					where: {
 						id: {$eq: req.body.id}
 					}
 				}
-				let question = await db.Question.findOne(queryBuilder);
-				await question.update({
-					question: req.body
-				});				
-				return res.json({message: "Pregunta ha sido editada"});
-			}
-			catch(err){
-				console.log( err );
-				return res.status(400).json({message: "Something went wrong"});
-			}
-		},
-		editAnswer: async function(){
-			try{
-				let ans = req.body.answer;
-				let queryBuilder =  {
-					where: {
-						id: {$eq: req.body.id}
-					}
-				};
+				let ques = await db.Question.findOne(queryBuilder);
+				await ques.update({
+					question: req.body.question,
+					points: req.body.points,
+					time: req.body.time
+				});
 
-				let answer = await db.Answer.findOne(queryBuilder)
-				await answer.update({
-					answer: ans
-				})
-				return res.json({message:"Respuesta editada"})
-			}
-			catch(err){
+				return res.json({message:"Pregunta editada"});
+			}	catch(err) {
 				console.log(err);
 				return res.status(400).json({message: "Something went wrong"});
 			}
+
+		},
+		editAnswer: async function(req, res){
+			try{
+				console.log(req.body)
+				let queryBuilder = {
+					where: {
+						id: {$eq: req.body.id}
+					}
+				}
+				let ans = await db.Answer.findOne(queryBuilder);
+				await ans.update({
+					answer: req.body.answer
+				});
+				return res.json({message:"Respuesta editada"});
+			}	catch(err) {
+				console.log(err);
+				return res.status(400).json({message: "Something went wrong"});
+			}
+
 		},
 
 		list: async function(req, res){
@@ -73,10 +75,14 @@ module.exports = function(express, db){
 				let queryBuilder = {
 					include: [{
 						model: db.Answer,
-						required: true
+						required: false
 					}],
-					where: {
-					}
+					where: [
+						{ questionnaireId: { $eq: req.body.qId } }
+					]
+				};
+				if (req.user.rolId == 3) {
+					queryBuilder.where.push({ userId: { $eq: req.user.id } });
 				}
 				let questions = await db.Question.findAll(queryBuilder);
 				return res.json(questions);							
@@ -118,6 +124,7 @@ module.exports = function(express, db){
 				let json = [];
 				let questionnaires = await db.Questionnaire.findAll();
 				for (var i = 0; i <= questionnaires.length - 1; i++) {
+
 					let questions = await db.Question.findAll({
 						where: {
 							questionnaireId: { $eq: questionnaires[i].id }
@@ -126,7 +133,8 @@ module.exports = function(express, db){
 					let data = {
 						id: questionnaires[i].id,
 						name: questionnaires[i].name,
-						questions: questions.length
+						questions: questions.length,
+						file: questionnaires[i].file
 					}
 					json.push(data);
 				}
@@ -152,21 +160,32 @@ module.exports = function(express, db){
 				return res.status(400).json({message: "Something went wrong"});
 			}
 		},
-		view: async function(req, res){
-			try{
-				let queryBuilder = {
-					include: [{
-						model: db.Answer,
-						required: true
-					}],
+		view: async function (req, res) {
+			try {
+				let queryBuilder = { 
 					where: {
-						id: {$eq: req.body.id}
+						questionnaireId: { $eq: req.body.id }
 					}
 				}
-				let questions = await db.Question.findAll(queryBuilder);
-				return res.json(questions);							
-			}catch(err){
+				let view = await db.Question.findAll(queryBuilder);
+				return res.json(view)
+			} catch(err) {
 				console.log( err );
+				return res.status(400).json({message: "Something went wrong"});
+			}
+		},
+		show: async function(req, res){
+			try{
+				let queryBuilder = {
+					where: {
+						id: { $eq: req.body.id}
+					}
+				}
+				let show = await db.Questionnaire.findOne(queryBuilder);
+				return res.json(show);			
+			}
+			catch (err){
+				console.log(err);
 				return res.status(400).json({message: "Something went wrong"});
 			}
 		}

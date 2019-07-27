@@ -1,5 +1,6 @@
 module.exports = function (app, db) {
 	var checkAuth = require("../middleware/check-auth")(app, db);
+	var checkRol = require("../middleware/check-rol")(app, db);
 
 	return {
 		

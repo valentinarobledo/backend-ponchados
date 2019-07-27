@@ -2,6 +2,7 @@ module.exports = function(app, db){
 
 	return{
 		students: async function (req, res) {
+			console.log(req.body);
 			try {
 				let queryBuilder = { 
 					where: {
@@ -41,21 +42,22 @@ module.exports = function(app, db){
 
 //Agregar usuario a un grupo
 		add: async function(req, res){
-			console.log(req.body);
 			try{
-				let user = req.user;
-				let username = req.body.username;
-				let groupId = req.body.groupId;
-				console.log(user, username, groupId)
+				let username = req.body.add; 
 				let queryBuilder = {
 					where: {
-						username: { $eq: req.body.username }
+						username: {$eq: username}
 					}
 				}
-				 user = await db.User.findOne(queryBuilder);
-				 await user.update(
-				 	groupId
-				 	);
+				let user = await db.User.findOne(queryBuilder);
+				if(!user){
+					return res.status(404).json({message: "Usuario no encontrado"});
+				} else {
+					await user.update({
+						groupId: req.body.id
+					});
+					return res.json({message: "Usuario agregado al grupo"});
+				}
 			} catch(err) { 
 				console.log( err );
 				return res.status(400).json({message: "Something went wrong"});
@@ -86,6 +88,7 @@ module.exports = function(app, db){
 		},
 
 		list: async function(req, res){
+			console.log(req.body);
 			try{
 				console.log(req.body);
 				let json = [];
