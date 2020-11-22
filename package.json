@@ -17,7 +17,7 @@
   },
   "homepage": "https://github.com/valentinarobledo/backend-ponchados#readme",
   "dependencies": {
-    "bcrypt": "^3.0.6",
+    "bcrypt": "^5.0.0",
     "express": "^4.16.4",
     "helmet": "^3.22.0",
     "multer": "^1.4.1",
