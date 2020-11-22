@@ -2,13 +2,13 @@
   "ENV": "development",
 
   "development": {
-    "database": "ponchados",
+    "database": "pochados",
     "username": "root",
-    "password": "Demo_pw9",
+    "password": "",
     "sequelizeOpts": {
       "host": "localhost",
       "dialect": "mysql",
-      "logging": false
+      "logging": true
     },
 
     "port": 8000

@@ -1,7 +1,9 @@
 module.exports = function(express, db){
 	return function (req, res, next) {
-		var token = req.headers.authorization.split(" ")[1];
-		var queryBuilder = {
+		console.log(req.headers)
+		if(!req.headers.authorization) return res.status(400).json({message:"Token requertido"})
+		let token = req.headers.authorization.split(" ")[1];
+		let queryBuilder = {
 			where: {
 				token: { $eq: token }
 			}
