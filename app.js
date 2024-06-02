@@ -1,7 +1,7 @@
 const express = require ("express");
 const app = express ();
-const helmet = require ("helmet");
-const multer = require("multer");
+//const helmet = require ("helmet");
+//const multer = require("multer");
 const bodyParser = require('body-parser');
 const config = require("./config/config.js");
 const db = require('./models');
@@ -29,5 +29,5 @@ app.use((req, res, next) => {
 
 app.use("/api/v1", router);
 app.listen(config.port, function(){
-	console.log(`Lintening on localhost:${config.port}`);
+	console.log(`Listening on localhost:${config.port}`);
 });

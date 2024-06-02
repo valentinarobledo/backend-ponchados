@@ -8,9 +8,9 @@ module.exports = function(sequelize, Datatypes){
 		paranoid: true,
 		tableName: 'uploads'
 	});
-	 Upload.associate = function(models){
-	 	models.Upload.belongsTo(models.Questionnaire);
-	 }
+	Upload.associate = function(models){
+	models.Upload.belongsTo(models.Questionnaire);
+	}
 	
 	return Upload;
 }

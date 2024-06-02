@@ -1,12 +1,12 @@
 'use strict';
 
-var fs        = require('fs');
-var path      = require('path');
-var Sequelize = require('sequelize');
-var ModelBase = require('../model');
-var basename  = path.basename(__filename);
-var config    = require(__dirname + '/../config/config.js');
-var db        = {};
+const fs = require('fs');
+const path = require('path');
+const Sequelize = require('sequelize');
+const ModelBase = require('../model');
+const basename = path.basename(__filename);
+const config = require(__dirname + '/../config/config.js');
+const db = {};
 
 const Op = Sequelize.Op;
 const operatorsAliases = {
@@ -46,37 +46,31 @@ const operatorsAliases = {
   $col: Op.col
 };
 
-var sequelize = new Sequelize(config.database, config.username, config.password, {...config.sequelizeOpts, operatorsAliases});
+const sequelize = new Sequelize(config.database, config.username, config.password, {...config.sequelizeOpts, operatorsAliases, logging: false});
 
-
-fs
-  .readdirSync(__dirname)
+// Leer todos los archivos de modelos y definir los modelos en Sequelize
+fs.readdirSync(__dirname)
   .filter(file => {
     return (file.indexOf('.') !== 0) && (file !== basename) && (file.slice(-3) === '.js');
   })
   .forEach(file => {
-    var model = sequelize['import'](path.join(__dirname, file));
+    const model = require(path.join(__dirname, file))(sequelize, Sequelize.DataTypes);
     db[model.name] = model;
   });
 
-  Object.keys(db).forEach(modelName => {
-    if (db[modelName].associate) {
-      db[modelName].associate(db);
-    }
+// Asociar los modelos si tienen asociaciones definidas
+Object.keys(db).forEach(modelName => {
+  if (db[modelName].associate) {
+    db[modelName].associate(db);
+  }
+});
+
+// Añadir métodos base a cada modelo
+Object.keys(db).forEach(modelName => {
+  Object.keys(ModelBase).forEach(fnName => {
+    db[modelName][fnName] = ModelBase[fnName];
   });
-
-
-
-  Object.keys(db).forEach(modelName => {
-
-    Object.keys(ModelBase).forEach(fnName => {
-      db[modelName][fnName] = ModelBase[fnName];
-    });
-   
-  });
-
-
-  
+});
 
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;

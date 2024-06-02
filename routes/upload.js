@@ -3,7 +3,7 @@ module.exports = function(app, db){
 
 	const controller =require("../controllers/upload")(app, db);
 	
-	router.post("/destionation", controller.destionation);
+	router.post("/destionation", controller.destination);
 	router.post("/filename", controller.filename);
 	router.post("/fileFilter", controller.fileFilter);
 	
