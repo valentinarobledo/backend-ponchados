@@ -7,14 +7,14 @@ module.exports = function(app, db){
 
 	router.post("/question", validations.store, controller.store);
 	router.post("/editQuestion", controller.editQuestion);
-	router.post("/list", validations.list, controller.list);
+	router.get("/list", validations.list, controller.list);
 	router.post("/create", validations.create, controller.create);
 	router.post("/store", validations.store, controller.store);
 	router.post("/questionnaire", controller.questionnaire);
 	router.post("/editAnswer", controller.editAnswer);
-	router.post("/delete", validations.delete, controller.delete);
-	router.post("/view", controller.view);
-	router.post("/show", controller.show);
+	router.delete("/delete", validations.delete, controller.delete);
+	router.get("/view", controller.view);
+	router.get("/show", controller.show);
 
 
 
