@@ -1,7 +1,7 @@
 module.exports = function (app, db) {
   return {
+    //students in a group
     students: async function (req, res) {
-      console.log(req.body);
       try {
         let queryBuilder = {
           where: {
@@ -29,32 +29,32 @@ module.exports = function (app, db) {
         if (!group) {
           group = await db.Group.create({ name });
 
-          return res.json({ message: "Grupo creado" });
+          return res.json({ message: "Group created" });
         }
-        return res.status(400).json({ message: "El grupo ya existe" });
+        return res.status(400).json({ message: "Group already exists" });
       } catch (err) {
         console.log(err);
         return res.status(400).json({ message: "Something went wrong" });
       }
     },
 
-    //Agregar usuario a un grupo
+    //Add user to a group
     add: async function (req, res) {
       try {
-        let username = req.body.add;
+        let email = req.body.email;
         let queryBuilder = {
           where: {
-            username: { $eq: username },
+            email: { $eq: email },
           },
         };
         let user = await db.User.findOne(queryBuilder);
         if (!user) {
-          return res.status(404).json({ message: "Usuario no encontrado" });
+          return res.status(404).json({ message: "User not found" });
         } else {
           await user.update({
             groupId: req.body.id,
           });
-          return res.json({ message: "Usuario agregado al grupo" });
+          return res.json({ message: "User added to group" });
         }
       } catch (err) {
         console.log(err);
@@ -62,37 +62,38 @@ module.exports = function (app, db) {
       }
     },
 
-    //editar informacion de usuario
+    //Edit group information
     edit: async function (req, res) {
       try {
-        let user = req.user;
-        // rolId student = 3, techer = 2,admin = 1
-        if (user.rolId == 3)
-          return res.status(400).json({ message: "Permission denied" });
-        let username = req.body.username;
+
         let name = req.body.name;
-        let email = req.body.email;
-        let number = req.body.number;
-        await user.update({
-          name,
-          username,
-          email,
-          number,
-        });
-        return res.json({ message: "user has been edited" });
+        let queryBuilder = {
+          where: {
+            id: { $eq: req.body.id },
+          },
+        };
+        let group = await db.Group.findOne(queryBuilder);
+        if(!group){
+          return res.status(404).json({message: "Group doesn't find"});
+        }else{
+          await group.update({
+            name,
+          });
+          return res.json({ message: "Group has been edited" });
+        }
       } catch (err) {
         console.log(err);
         return res.status(400).json({ message: "Something went wrong" });
       }
     },
 
+    //List groups
     list: async function (req, res) {
       console.log(req.body);
       try {
-        console.log(req.body);
         let json = [];
         let groups = await db.Group.findAll();
-        for (var i = 0; i <= groups.length - 1; i++) {
+        for (let i = 0; i <= groups.length - 1; i++) {
           let students = await db.User.findAll({
             where: {
               groupId: { $eq: groups[i].id },
@@ -122,8 +123,12 @@ module.exports = function (app, db) {
           },
         };
         let group = await db.Group.findOne(queryBuilder);
-        await group.destroy();
-        return res.json({ message: "Grupo eliminado" });
+        if(!group){
+          return res.status(404).json({message: "Group doesn't find"});
+        }else{
+          await group.destroy();
+          return res.json({ message: "Group deleted" });
+        }
       } catch (err) {
         console.log(err);
         return res.status(400).json({ message: "Something went wrong" });
@@ -133,19 +138,21 @@ module.exports = function (app, db) {
     //Borrar usuario de un grupo
     deleteStudent: async function (req, res) {
       try {
-        console.log(req.body);
-
         let queryBuilder = {
           where: {
             id: { $eq: req.body.id },
           },
         };
         let user = await db.User.findOne(queryBuilder);
-        await user.update({
-          groupId: 0,
-        });
 
-        return res.json({ message: "Estudiante eliminado" });
+        if(!user){
+          res.status(404).json({message: "User doesn't find"})
+        } else{
+          await user.update({
+            groupId: null,
+          });
+          return res.json({ message: "Student deleted from group" });
+        }
       } catch (err) {
         console.log(err);
         return res.status(400).json({ message: "Something went wrong" });

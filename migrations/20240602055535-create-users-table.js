@@ -16,7 +16,15 @@ module.exports = {
         autoIncrement: true,
         primaryKey: true
       },
-      username: {
+      name: {
+        type: Sequelize.STRING(191),
+        allowNull: true
+      },
+      email: {
+        type: Sequelize.STRING(191),
+        allowNull: true
+      },
+      number: {
         type: Sequelize.STRING(191),
         allowNull: true
       },
@@ -44,23 +52,11 @@ module.exports = {
         onUpdate: 'CASCADE',
         onDelete: 'SET NULL'
       },
-      name: {
-        type: Sequelize.STRING(191),
-        allowNull: true
-      },
-      email: {
-        type: Sequelize.STRING(191),
-        allowNull: true
-      },
       points: {
         type: Sequelize.INTEGER,
         allowNull: true
       },
       token: {
-        type: Sequelize.STRING(191),
-        allowNull: true
-      },
-      number: {
         type: Sequelize.STRING(191),
         allowNull: true
       },

@@ -1,18 +1,22 @@
 const bcrypt = require("bcrypt");
 
-module.exports = function (app, db) {
+module.exports = (app, db) => {
   return {
     login: async function (req, res) {
       try {
         let user = req.user;
+
         let bool = await bcrypt.compare(req.body.password, user.password);
+        console.log(user.password);
+
         if (!bool) {
-          return res.status(404).json({ message: "Contraseña incorrecta" });
+          return res.status(404).json({ message: "Invalid password" });
         }
+
         return res.json({
-          message: "Contraseñas validas",
           user: {
             name: user.name,
+            email: user.email,
             token: user.token,
             rolId: user.rolId,
           },
@@ -25,12 +29,13 @@ module.exports = function (app, db) {
 
     register: async function (req, res) {
       try {
-        let username = req.body.username;
+        let email = req.body.email;
         let queryBuilder = {
           where: {
-            username:username,
+            email:email,
           },
         };
+
         let user = await db.User.findOne(queryBuilder);
 
         if (!user) {
@@ -43,25 +48,24 @@ module.exports = function (app, db) {
           if (password != verifyPassword) {
             return res
               .status(400)
-              .json({ message: "Las contraseñas no coninciden " });
+              .json({ message: "Passwords do not match" });
           }
           password = await bcrypt.hash(req.body.password, 10);
 
           let data = {
             email,
-            username,
             token: new Buffer.from(password).toString("Base64"),
             name,
             number,
             password,
-            rolId: 3,
+            rolId: 1, //Rol de estudiante
           };
 
           user = await db.User.create(data);
 
-          return res.json({ message: "Usuario creado" });
+          return res.json({ message: "User created" });
         } else {
-          return res.status(400).json({ message: "El usuario ya existe" });
+          return res.status(400).json({ message: "User already exists" });
         }
       } catch (err) {
         console.log(err);

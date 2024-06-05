@@ -15,7 +15,7 @@ module.exports = function(app, db){
 		 fileFilter: function (req, file, cb) {
 
 		 if (!file.originalname.match(/\.(pdf|doc|docx|jpg)$/)) {
-		 return cb(new Error('Error en el tipo de archivo.'));
+		 return cb(new Error('Error in file type'));
 		 }
 
 		 cb(null, true);

@@ -6,7 +6,7 @@ module.exports = function(app, db){
 
 
 	router.post("/question", validations.store, controller.store);
-	router.post("/editQuestion", controller.editQuestion);
+	router.put("/editQuestion", controller.editQuestion);
 	router.get("/list", validations.list, controller.list);
 	router.post("/create", validations.create, controller.create);
 	router.post("/store", validations.store, controller.store);

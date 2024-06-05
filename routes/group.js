@@ -4,19 +4,13 @@ module.exports = function(app, db){
 	const controller =require("../controllers/group")(app, db);
 	const validations= require("../validations/group")(app, db);
 
-
+	router.get("/students", validations.students, controller.students);
 	router.post("/create", validations.create, controller.create);
-	router.post("/add", controller.add);
-	router.post("/edit", validations.edit, controller.edit);
+	router.put("/add", validations.add, controller.add);
+	router.put("/edit", validations.edit, controller.edit);
 	router.get("/list", validations.list, controller.list);
-	router.get("/view", validations.students, controller.students);
 	router.delete("/delete", validations.delete, controller.delete);
-	router.delete("/deleteStudent", validations.deleteStudent, controller.deleteStudent);
-
-	
-
+	router.put("/deleteStudent", validations.deleteStudent, controller.deleteStudent);
 
 	return router;
-
-
 }
